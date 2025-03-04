@@ -20,13 +20,14 @@ sys.path.append(str(project_root))
 from src.cot_faithfulness.game_state import GameState
 
 
-def process_json_files(num_games=None):
+def process_json_files(num_games=None, include_trace=True):
     """
     Process JSON files in the data/json directory.
     Create dataset rows for each discussion, tracking information in chronological order.
     
     Args:
         num_games: Maximum number of games to process (None for all)
+        include_trace: Whether to include trace information in the output
         
     Returns:
         List of dictionaries containing player data
@@ -162,8 +163,11 @@ def process_json_files(num_games=None):
                             'mentioned_count': players_info[speaker]['mentioned_count'],
                             'vote_count': players_info[speaker]['vote_count'],
                             'discussion_message': message,
-                            'trace': '\n'.join(current_trace)
                         }
+                        
+                        # Only include trace if requested
+                        if include_trace:
+                            row['trace'] = '\n'.join(current_trace)
                         
                         dataset_rows.append(row)
                 
@@ -194,10 +198,11 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Create a dataset from playthrough data.')
     parser.add_argument('--num-games', type=int, default=None, help='Maximum number of games to process')
+    parser.add_argument('--no-trace', action='store_true', help='Exclude trace information from the output')
     args = parser.parse_args()
     
     # Process JSON files
-    dataset_rows = process_json_files(args.num_games)
+    dataset_rows = process_json_files(args.num_games, not args.no_trace)
     
     if not dataset_rows:
         print("No playthrough data found.")
@@ -217,8 +222,11 @@ def main():
         'mentioned_count',
         'vote_count',
         'discussion_message',
-        'trace'
     ]
+    
+    # Only include trace field if requested
+    if not args.no_trace:
+        field_names.append('trace')
     
     # Write the dataset to a CSV file
     with open(output_file, 'w', newline='', encoding='utf-8') as f:
@@ -233,6 +241,7 @@ def main():
     print("\nData Summary:")
     print(f"Total discussion messages processed: {len(dataset_rows)}")
     print(f"Total games processed: {len(set(row['file_name'] for row in dataset_rows))}")
+    print(f"Trace information included: {not args.no_trace}")
     
     print(f"\nOutput has been saved to: {output_file}")
 

@@ -73,7 +73,15 @@ quote-style = "double"
 [project]
 authors = []
 requires-python = "<4.0,>=3.11"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.10.1",
+    "networkx>=3.4.2",
+    "pandas>=2.2.3",
+    "plotly>=6.0.0",
+    "scikit-learn>=1.6.1",
+    "seaborn>=0.13.2",
+    "wordcloud>=1.9.4",
+]
 name = "cot_faithfulness"
 version = "0.1.0"
 description = "cot"
