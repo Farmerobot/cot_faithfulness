@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "among_them"
+name = "cot_faithfulness"
 version = "0.1.0"
-description = "This project tests and compares the persuasive abilities of large language models (LLMs) in a game-like environment simulating 'Among Us', where AI agents powered by LLMs interact, make decisions, and attempt to persuade each other."
+description = "cot"
 authors = ["Marcin Korcz", "Andrii Chmutov", "Vasyl Korzavatykh", "Mateusz Idziejczak", "Mateusz Stawicki"]
 readme = "README.md"
 package-mode = true
 packages = [
-    { include = "among_them", from = "src" }
+    { include = "cot_faithfulness", from = "src" }
 ]
 
 [tool.poetry.dependencies]
