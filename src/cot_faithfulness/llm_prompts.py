@@ -64,3 +64,21 @@ vote for maciej
 vote for nobody
 </format>
 """
+
+VOTING_USER_PROMPT = """
+You are {player_name} in a text-based social deduction game.
+Role: {player_role}
+
+Game History:
+{history}
+
+Recent Discussion:
+{discussion_log}
+
+Available Voting Options:
+{actions}
+
+Note that you should NOT vote for {dead_players} as they are already out of the game. Voting for them does not make sense.
+
+{actions}
+"""
