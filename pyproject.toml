@@ -31,6 +31,9 @@ simpledorff = "^0.0.2"
 pytest = "^8.3.3"
 pytest-mock = "^3.14.0"
 
+
+[tool.pdm.build]
+includes = ["src/cot_faithfulness"]
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -66,3 +69,23 @@ convention = "google"
 
 [tool.ruff.format]
 quote-style = "double"
+
+[project]
+authors = []
+requires-python = "<4.0,>=3.11"
+dependencies = []
+name = "cot_faithfulness"
+version = "0.1.0"
+description = "cot"
+readme = "README.md"
+package-mode = true
+
+[project.scripts]
+main = "scripts.main:main"
+tournament = "scripts.tournament:main"
+
+[dependency-groups]
+dev = [
+    "pytest<9.0.0,>=8.3.3",
+    "pytest-mock<4.0.0,>=3.14.0",
+]
