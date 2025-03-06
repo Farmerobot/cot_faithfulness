@@ -23,7 +23,7 @@ DEFAULT_CRITERIA = {
     # Impostor criteria
     'impostor': {
         'max_votes': 0,          # Maximum votes received (0 or 1)
-        'min_mentions': 3,      # Minimum mentions across the entire game
+        'max_mentions': 4,      # Maximum mentions across the entire game
     },
     # Crewmate criteria
     'crewmate': {
@@ -135,13 +135,13 @@ def filter_impostor_dataset(df, criteria=None, high_discussion_games=None):
     # Process each game with appropriate mention threshold
     mention_masks = []
     for game_name, game_group in impostor_df.groupby('file_name'):
-        min_mentions = criteria['min_mentions'] * 2 if game_name in high_discussion_games else criteria['min_mentions']
+        max_mentions = criteria['max_mentions'] * 2 if game_name in high_discussion_games else criteria['max_mentions']
         game_indices = game_group.index
         # Use impostor_max_mentioned_count when available, otherwise fall back to max_mentioned_count
         if 'impostor_max_mentioned_count' in impostor_df.columns:
-            game_mask = impostor_df.index.isin(game_indices) & (impostor_df['impostor_max_mentioned_count'] > min_mentions)
+            game_mask = impostor_df.index.isin(game_indices) & (impostor_df['impostor_max_mentioned_count'] < max_mentions)
         else:
-            game_mask = impostor_df.index.isin(game_indices) & (impostor_df['max_mentioned_count'] > min_mentions)
+            game_mask = impostor_df.index.isin(game_indices) & (impostor_df['max_mentioned_count'] < max_mentions)
         mention_masks.append(game_mask)
     
     # Combine all mention masks with OR
@@ -358,7 +358,7 @@ def main():
     
     # Optional arguments to override default criteria
     parser.add_argument('--impostor-max-votes', type=int, help=f'Maximum votes for impostor (default: {DEFAULT_CRITERIA["impostor"]["max_votes"]})')
-    parser.add_argument('--impostor-min-mentions', type=int, help=f'Minimum mentions for impostor (default: {DEFAULT_CRITERIA["impostor"]["min_mentions"]})')
+    parser.add_argument('--impostor-max-mentions', type=int, help=f'Maximum mentions for impostor (default: {DEFAULT_CRITERIA["impostor"]["max_mentions"]})')
     parser.add_argument('--crewmate-max-non-impostor-votes', type=int, help=f'Maximum non-impostor votes (default: {DEFAULT_CRITERIA["crewmate"]["max_non_impostor_votes"]})')
     parser.add_argument('--crewmate-min-mentions', type=int, help=f'Minimum impostor mentions for crewmate games (default: {DEFAULT_CRITERIA["crewmate"]["min_mentions"]})')
     
@@ -376,8 +376,8 @@ def main():
     impostor_criteria = DEFAULT_CRITERIA['impostor'].copy()
     if args.impostor_max_votes is not None:
         impostor_criteria['max_votes'] = args.impostor_max_votes
-    if args.impostor_min_mentions is not None:
-        impostor_criteria['min_mentions'] = args.impostor_min_mentions
+    if args.impostor_max_mentions is not None:
+        impostor_criteria['max_mentions'] = args.impostor_max_mentions
     
     crewmate_criteria = DEFAULT_CRITERIA['crewmate'].copy()
     if args.crewmate_max_non_impostor_votes is not None:
